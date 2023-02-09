@@ -7,4 +7,7 @@ import io.temporal.activity.ActivityMethod;
 public interface RecipeCreator {
     @ActivityMethod
     String make(String ingredients);
+
+    @ActivityMethod
+    void cancelGeneration();
 }
