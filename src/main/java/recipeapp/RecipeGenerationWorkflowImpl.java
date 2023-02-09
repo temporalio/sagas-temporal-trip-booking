@@ -26,27 +26,29 @@ public class RecipeGenerationWorkflowImpl implements RecipeGenerationWorkflow {
             .setRetryOptions(retryoptions)
             .build();
     // ActivityStubs enable calls to methods as if the Activity object is local, but actually perform an RPC.
-    private final Map<String, ActivityOptions> perActivityMethodOptions = new HashMap<String, ActivityOptions>(){{
+    private final Map<String, ActivityOptions> perActivityMethodOptions = new HashMap<String, ActivityOptions>() {{
         put(WITHDRAW, ActivityOptions.newBuilder().setHeartbeatTimeout(Duration.ofSeconds(5)).build());
     }};
     private final Money account = Workflow.newActivityStub(Money.class, defaultActivityOptions, perActivityMethodOptions);
+    private final RecipeCreator recipeCreator = Workflow.newActivityStub(RecipeCreator.class, defaultActivityOptions, perActivityMethodOptions);
+    private final Email emailer = Workflow.newActivityStub(Email.class, defaultActivityOptions, perActivityMethodOptions);
+
 
     // The transfer method is the entry point to the Workflow.
     // Activity method executions can be orchestrated here or from within other Activity methods.
     @Override
-    public void generateRecipe(String fromAccountId, String toAccountId, String ingredients, String referenceId) {
-        makeCharge(fromAccountId, toAccountId, referenceId);
-        buildRecipe(ingredients);
+    public void generateRecipe(String fromAccountId, String toAccountId, String referenceId,
+                               String ingredients, String email) {
+        chargeAccounts(fromAccountId, toAccountId, referenceId);
+        String result = recipeCreator.make(ingredients);
+        System.out.println("hiiiiii");
+        System.out.println(result);
+        emailer.send(email, result);
     }
 
-    private void buildRecipe(String ingredients) {
-
-    }
-
-    private void makeCharge(String fromAccountId, String toAccountId, String referenceId) {
+    private void chargeAccounts(String fromAccountId, String toAccountId, String referenceId) {
         // Move the $$.
         account.withdraw(fromAccountId, referenceId, price);
         account.deposit(toAccountId, referenceId, price);
     }
-
 }
