@@ -22,7 +22,9 @@ public class InitiateRecipeGeneration {
         String fromAccount = "001-001";
         String toAccount = "002-002";
         String ingredients = "Fritos\nChili\nShredded cheddar cheese\nSweet white or red onions, diced small\nSour cream";
-        WorkflowExecution we = WorkflowClient.start(workflow::generateRecipe, fromAccount, toAccount, ingredients, transferReferenceId);
+        String emailAddress = "foo@bar.com";
+        WorkflowExecution we = WorkflowClient.start(workflow::generateRecipe, fromAccount,
+                toAccount, transferReferenceId, ingredients, emailAddress);
         System.out.printf("\nCharge from account %s to account %s is processing\n", fromAccount, toAccount);
         System.out.printf("\nWorkflowID: %s RunID: %s", we.getWorkflowId(), we.getRunId());
         System.exit(0);

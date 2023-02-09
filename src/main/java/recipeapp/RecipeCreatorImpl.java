@@ -9,9 +9,4 @@ public class RecipeCreatorImpl implements RecipeCreator {
                 "\nGenerated the following recipe: %s.\n", recipe);
         return recipe;
     }
-
-    @Override
-    public void cancelGeneration() {
-        System.out.printf("Canceling recipe generation");
-    }
 }

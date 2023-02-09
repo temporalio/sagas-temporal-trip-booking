@@ -2,6 +2,7 @@ package recipeapp;
 
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
 import static org.mockito.Mockito.verify;
 
 import io.temporal.client.WorkflowClient;
@@ -12,8 +13,9 @@ import io.temporal.worker.Worker;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
+import org.mockito.ArgumentMatchers;
 
-public class RecipeGenerationWorkflowTest {
+public class RecipeCreatorGenerationWorkflowTest {
 
     private TestWorkflowEnvironment testEnv;
     private Worker worker;
@@ -34,15 +36,28 @@ public class RecipeGenerationWorkflowTest {
 
     @Test
     public void testTransfer() {
+        String ingredients = "bread";
+        String acct1 = "account1";
+        String acct2 = "account2";
+        String reference = "reference1";
+        String email = "foo@bar.com";
         Money activities = mock(MoneyImpl.class);
         worker.registerActivitiesImplementations(activities);
+        Email emailer = mock(EmailImpl.class);
+        worker.registerActivitiesImplementations(emailer);
+        RecipeCreator creator = mock(RecipeCreatorImpl.class);
+        when(creator.make(ingredients)).thenReturn("recipe");
+        worker.registerActivitiesImplementations(creator);
+
         testEnv.start();
         WorkflowOptions options = WorkflowOptions.newBuilder()
                 .setTaskQueue(Shared.RECIPE_GENERATION_TASK_QUEUE)
                 .build();
         RecipeGenerationWorkflow workflow = workflowClient.newWorkflowStub(RecipeGenerationWorkflow.class, options);
-        workflow.generateRecipe("account1", "account2", "bread", "reference1");
-        verify(activities).withdraw(eq("account1"), eq("reference1"), eq(1.99));
-        verify(activities).deposit(eq("account2"), eq("reference1"), eq(1.99));
+        workflow.generateRecipe(acct1, acct2, reference, ingredients, email);
+        verify(activities).withdraw(eq(acct1), eq(reference), eq(1.99));
+        verify(activities).deposit(eq(acct2), eq(reference), eq(1.99));
+        verify(creator).make(eq(ingredients));
+        verify(emailer).send(eq(email), ArgumentMatchers.anyString());
     }
 }
