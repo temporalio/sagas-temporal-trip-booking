@@ -26,12 +26,12 @@ dependencies {
     testImplementation group: 'org.mockito', name: 'mockito-core', version: '4.5.1'
 }
 
-task initiateTransfer(type: JavaExec) {
-    main = 'moneytransferapp.InitiateMoneyTransfer'
+task initiateGeneration(type: JavaExec) {
+    main = 'recipeapp.InitiateRecipeGeneration'
     classpath = sourceSets.main.runtimeClasspath
 }
 
 task startWorker(type: JavaExec) {
-    main = 'moneytransferapp.MoneyTransferWorker'
+    main = 'recipeapp.RecipeGenerationWorker'
     classpath = sourceSets.main.runtimeClasspath
 }

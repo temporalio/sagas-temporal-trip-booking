@@ -1,4 +1,4 @@
-package moneytransferapp;
+package recipeapp;
 
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.mock;
@@ -13,7 +13,7 @@ import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 
-public class MoneyTransferWorkflowTest {
+public class RecipeGenerationWorkflowTest {
 
     private TestWorkflowEnvironment testEnv;
     private Worker worker;
@@ -22,8 +22,8 @@ public class MoneyTransferWorkflowTest {
     @Before
     public void setUp() {
         testEnv = TestWorkflowEnvironment.newInstance();
-        worker = testEnv.newWorker(Shared.MONEY_TRANSFER_TASK_QUEUE);
-        worker.registerWorkflowImplementationTypes(MoneyTransferWorkflowImpl.class);
+        worker = testEnv.newWorker(Shared.RECIPE_GENERATION_TASK_QUEUE);
+        worker.registerWorkflowImplementationTypes(RecipeGenerationWorkflowImpl.class);
         workflowClient = testEnv.getWorkflowClient();
     }
 
@@ -34,15 +34,15 @@ public class MoneyTransferWorkflowTest {
 
     @Test
     public void testTransfer() {
-        AccountActivity activities = mock(AccountActivityImpl.class);
+        Money activities = mock(MoneyImpl.class);
         worker.registerActivitiesImplementations(activities);
         testEnv.start();
         WorkflowOptions options = WorkflowOptions.newBuilder()
-                .setTaskQueue(Shared.MONEY_TRANSFER_TASK_QUEUE)
+                .setTaskQueue(Shared.RECIPE_GENERATION_TASK_QUEUE)
                 .build();
-        MoneyTransferWorkflow workflow = workflowClient.newWorkflowStub(MoneyTransferWorkflow.class, options);
-        workflow.transfer("account1", "account2", "reference1", 1.23);
-        verify(activities).withdraw(eq("account1"), eq("reference1"), eq(1.23));
-        verify(activities).deposit(eq("account2"), eq("reference1"), eq(1.23));
+        RecipeGenerationWorkflow workflow = workflowClient.newWorkflowStub(RecipeGenerationWorkflow.class, options);
+        workflow.generateRecipe("account1", "account2", "bread", "reference1");
+        verify(activities).withdraw(eq("account1"), eq("reference1"), eq(1.99));
+        verify(activities).deposit(eq("account2"), eq("reference1"), eq(1.99));
     }
 }
