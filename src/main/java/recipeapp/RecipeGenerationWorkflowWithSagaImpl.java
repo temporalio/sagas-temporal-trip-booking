@@ -4,14 +4,14 @@ import io.temporal.activity.ActivityOptions;
 import io.temporal.failure.ActivityFailure;
 import io.temporal.workflow.Workflow;
 import io.temporal.common.RetryOptions;
+import io.temporal.workflow.Saga;
 
 import java.time.Duration;
 import java.util.HashMap;
 import java.util.Map;
 
-// Implementation of the workflow using our built-in failure handling.
-
-public class RecipeGenerationWorkflowImpl implements RecipeGenerationWorkflow {
+// Implementation of the workflow using the built-in Saga class.
+public class RecipeGenerationWorkflowWithSagaImpl implements RecipeGenerationWorkflow {
     private static final String WITHDRAW = "Withdraw";
     private static final double price = 1.99;
     // RetryOptions specify how to automatically handle retries when Activities fail.
@@ -41,29 +41,26 @@ public class RecipeGenerationWorkflowImpl implements RecipeGenerationWorkflow {
     @Override
     public void generateRecipe(String fromAccountId, String toAccountId, String referenceId,
                                String ingredients, String email) {
+        Saga saga = new Saga(new Saga.Options.Builder().build());
         try {
-            chargeAccounts(fromAccountId, toAccountId, referenceId);
-            try {
-                String result = recipeCreator.make(ingredients);
-                emailer.send(email, result);
-            } catch (ActivityFailure a) {
-                recipeCreator.cancelGeneration();
-                throw a;
-            }
-        } catch (ActivityFailure a) {
+            chargeAccounts(fromAccountId, toAccountId, referenceId, saga);
+            String result = recipeCreator.make(ingredients);
+            saga.addCompensation(recipeCreator::cancelGeneration);
+            emailer.send(email, result);
+        } catch (ActivityFailure e) {
             emailer.sendFailureEmail(email);
+            saga.compensate();
+            throw e;
         }
     }
 
-    private void chargeAccounts(String fromAccountId, String toAccountId, String referenceId) throws ActivityFailure {
+    private void chargeAccounts(String fromAccountId, String toAccountId, String referenceId,
+                                Saga saga) {
         // Move the $$.
         account.withdraw(fromAccountId, referenceId, price);
-        try {
-            account.deposit(toAccountId, referenceId, price);
-        } catch (ActivityFailure a) {
-            // Refund if we are unable to make the deposit.
-            account.deposit(fromAccountId, referenceId, price);
-            throw a;
-        }
+        saga.addCompensation(account::deposit, fromAccountId, referenceId, price);
+        
+        account.deposit(toAccountId, referenceId, price);
+        saga.addCompensation(account::withdraw, toAccountId, referenceId, price);
     }
 }

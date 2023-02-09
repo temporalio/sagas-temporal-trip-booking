@@ -7,4 +7,7 @@ import io.temporal.activity.ActivityMethod;
 public interface Email {
     @ActivityMethod
     void send(String emailAddress, String recipe);
+    
+    @ActivityMethod
+    void sendFailureEmail(String emailAddress);
 }

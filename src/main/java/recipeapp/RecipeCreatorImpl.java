@@ -1,5 +1,7 @@
 package recipeapp;
 
+import org.checkerframework.checker.interning.qual.UsesObjectEquals;
+
 public class RecipeCreatorImpl implements RecipeCreator {
     @Override
     public String make(String ingredients) {
@@ -8,5 +10,10 @@ public class RecipeCreatorImpl implements RecipeCreator {
         System.out.printf(
                 "\nGenerated the following recipe: %s.\n", recipe);
         return recipe;
+    }
+
+    @Override
+    public void cancelGeneration() {
+        System.out.printf("Canceling recipe generation");
     }
 }
