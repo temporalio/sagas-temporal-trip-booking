@@ -1,4 +1,4 @@
-package moneytransferapp;
+package recipeapp;
 
 import io.temporal.activity.ActivityOptions;
 import io.temporal.workflow.Workflow;
@@ -8,9 +8,9 @@ import java.time.Duration;
 import java.util.HashMap;
 import java.util.Map;
 
-// @@@SNIPSTART money-transfer-project-template-java-workflow-implementation
-public class MoneyTransferWorkflowImpl implements MoneyTransferWorkflow {
+public class RecipeGenerationWorkflowImpl implements RecipeGenerationWorkflow {
     private static final String WITHDRAW = "Withdraw";
+    private static final double price = 1.99;
     // RetryOptions specify how to automatically handle retries when Activities fail.
     private final RetryOptions retryoptions = RetryOptions.newBuilder()
             .setInitialInterval(Duration.ofSeconds(1))
@@ -29,15 +29,24 @@ public class MoneyTransferWorkflowImpl implements MoneyTransferWorkflow {
     private final Map<String, ActivityOptions> perActivityMethodOptions = new HashMap<String, ActivityOptions>(){{
         put(WITHDRAW, ActivityOptions.newBuilder().setHeartbeatTimeout(Duration.ofSeconds(5)).build());
     }};
-    private final AccountActivity account = Workflow.newActivityStub(AccountActivity.class, defaultActivityOptions, perActivityMethodOptions);
+    private final Money account = Workflow.newActivityStub(Money.class, defaultActivityOptions, perActivityMethodOptions);
 
     // The transfer method is the entry point to the Workflow.
     // Activity method executions can be orchestrated here or from within other Activity methods.
     @Override
-    public void transfer(String fromAccountId, String toAccountId, String referenceId, double amount) {
-
-        account.withdraw(fromAccountId, referenceId, amount);
-        account.deposit(toAccountId, referenceId, amount);
+    public void generateRecipe(String fromAccountId, String toAccountId, String ingredients, String referenceId) {
+        makeCharge(fromAccountId, toAccountId, referenceId);
+        buildRecipe(ingredients);
     }
+
+    private void buildRecipe(String ingredients) {
+
+    }
+
+    private void makeCharge(String fromAccountId, String toAccountId, String referenceId) {
+        // Move the $$.
+        account.withdraw(fromAccountId, referenceId, price);
+        account.deposit(toAccountId, referenceId, price);
+    }
+
 }
-// @@@SNIPEND

@@ -1,8 +1,8 @@
-package moneytransferapp;
+package recipeapp;
 
 // @@@SNIPSTART money-transfer-project-template-java-shared-constants
 public interface Shared {
 
-    static final String MONEY_TRANSFER_TASK_QUEUE = "MONEY_TRANSFER_TASK_QUEUE";
+    static final String RECIPE_GENERATION_TASK_QUEUE = "RECIPE_GENERATION_TASK_QUEUE";
 }
 // @@@SNIPEND

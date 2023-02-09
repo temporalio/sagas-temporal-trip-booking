@@ -1,12 +1,10 @@
-package moneytransferapp;
-
-// @@@SNIPSTART money-transfer-project-template-java-activity-interface
+package recipeapp;
 
 import io.temporal.activity.ActivityInterface;
 import io.temporal.activity.ActivityMethod;
 
 @ActivityInterface
-public interface AccountActivity {
+public interface Money {
 
     @ActivityMethod
     void deposit(String accountId, String referenceId, double amount);
@@ -14,4 +12,3 @@ public interface AccountActivity {
     @ActivityMethod
     void withdraw(String accountId, String referenceId, double amount);
 }
-// @@@SNIPEND
