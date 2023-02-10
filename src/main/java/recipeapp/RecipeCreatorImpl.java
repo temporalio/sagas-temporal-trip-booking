@@ -1,7 +1,5 @@
 package recipeapp;
 
-import org.checkerframework.checker.interning.qual.UsesObjectEquals;
-
 public class RecipeCreatorImpl implements RecipeCreator {
     @Override
     public String make(String ingredients) {
