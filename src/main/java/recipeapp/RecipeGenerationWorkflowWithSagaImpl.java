@@ -13,7 +13,7 @@ import java.util.Map;
 // Implementation of the workflow using the built-in Saga class.
 public class RecipeGenerationWorkflowWithSagaImpl implements RecipeGenerationWorkflow {
     private static final String WITHDRAW = "Withdraw";
-    private static final double price = 1.99;
+    private static final double priceInCents = 199;
     // RetryOptions specify how to automatically handle retries when Activities fail.
     private final RetryOptions retryoptions = RetryOptions.newBuilder()
             .setInitialInterval(Duration.ofSeconds(1))
