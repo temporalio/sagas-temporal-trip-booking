@@ -39,12 +39,10 @@ public class RecipeCreatorGenerationWorkflowTest {
         String ingredients = "bread";
         String acct1 = "account1";
         String acct2 = "account2";
-        String reference = "reference1";
+        String reference = "idempotencyKey1";
         String email = "foo@bar.com";
         Money activities = mock(MoneyImpl.class);
         worker.registerActivitiesImplementations(activities);
-        Email emailer = mock(EmailImpl.class);
-        worker.registerActivitiesImplementations(emailer);
         RecipeCreator creator = mock(RecipeCreatorImpl.class);
         when(creator.make(ingredients)).thenReturn("recipe");
         worker.registerActivitiesImplementations(creator);
@@ -58,6 +56,5 @@ public class RecipeCreatorGenerationWorkflowTest {
         verify(activities).withdraw(eq(acct1), eq(reference), eq(1.99));
         verify(activities).deposit(eq(acct2), eq(reference), eq(1.99));
         verify(creator).make(eq(ingredients));
-        verify(emailer).send(eq(email), ArgumentMatchers.anyString());
     }
 }

@@ -12,12 +12,9 @@ import java.util.Map;
 // Implementation of the workflow using our built-in failure handling.
 
 public class RecipeGenerationWorkflowImpl implements RecipeGenerationWorkflow {
-    private static final String WITHDRAW = "Withdraw";
     private static final int priceInCents = 199;
     private final Money account = Workflow.newActivityStub(Money.class);
     private final RecipeCreator recipeCreator = Workflow.newActivityStub(RecipeCreator.class);
-    private final Email emailer = Workflow.newActivityStub(Email.class);
-
 
     // Workflow Entrypoint.
     @Override
@@ -27,7 +24,7 @@ public class RecipeGenerationWorkflowImpl implements RecipeGenerationWorkflow {
             chargeAccounts(fromAccountId, toAccountId, referenceId);
             try {
                 String result = recipeCreator.make(ingredients);
-                emailer.send(email, result);
+                sendEmail(email, result);
             } catch (ActivityFailure a) {
                 recipeCreator.cancelGeneration();
                 // Refund the money.
@@ -35,7 +32,7 @@ public class RecipeGenerationWorkflowImpl implements RecipeGenerationWorkflow {
                 throw a;
             }
         } catch (ActivityFailure a) {
-            emailer.sendFailureEmail(email);
+            sendFailureEmail(email);
         }
     }
 
@@ -49,5 +46,15 @@ public class RecipeGenerationWorkflowImpl implements RecipeGenerationWorkflow {
             account.deposit(fromAccountId, referenceId, priceInCents);
             throw a;
         }
+    }
+
+    private void sendEmail(String emailAddress, String recipe) {
+        System.out.printf(
+                "\nSending email with recipe to %s.\n", emailAddress);
+    }
+
+    private void sendFailureEmail(String emailAddress) {
+        System.out.printf("\nSending email to %s to say we could not generate a recipe.\n",
+                emailAddress);
     }
 }

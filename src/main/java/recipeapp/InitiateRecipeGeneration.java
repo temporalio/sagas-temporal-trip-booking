@@ -18,7 +18,8 @@ public class InitiateRecipeGeneration {
                 .build();
         WorkflowClient client = WorkflowClient.newInstance(service);
         RecipeGenerationWorkflow workflow = client.newWorkflowStub(RecipeGenerationWorkflow.class, options);
-        String transferReferenceId = UUID.randomUUID().toString(); // so it executes only once. I think.
+        // Idempotency key
+        String transferReferenceId = UUID.randomUUID().toString();
         String fromAccount = "001-001";
         String toAccount = "002-002";
         String ingredients = "Fritos\nChili\nShredded cheddar cheese\nSweet white or red onions, diced small\nSour cream";

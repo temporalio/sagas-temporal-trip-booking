@@ -20,7 +20,6 @@ public class RecipeGenerationWorker {
         worker.registerWorkflowImplementationTypes(RecipeGenerationWorkflowImpl.class);
         worker.registerActivitiesImplementations(new MoneyImpl());
         worker.registerActivitiesImplementations(new RecipeCreatorImpl());
-        worker.registerActivitiesImplementations(new EmailImpl());
         // Start listening to the Task Queue.
         factory.start();
         //System.exit(0);

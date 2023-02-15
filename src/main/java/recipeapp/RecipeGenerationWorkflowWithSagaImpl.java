@@ -1,47 +1,47 @@
 package recipeapp;
 
-import io.temporal.activity.ActivityOptions;
 import io.temporal.failure.ActivityFailure;
 import io.temporal.workflow.Workflow;
-import io.temporal.common.RetryOptions;
 import io.temporal.workflow.Saga;
-
-import java.time.Duration;
-import java.util.HashMap;
-import java.util.Map;
 
 // Implementation of the workflow using the built-in Saga class.
 public class RecipeGenerationWorkflowWithSagaImpl implements RecipeGenerationWorkflow {
-    private static final String WITHDRAW = "Withdraw";
     private static final double price = 1.99;
     private final Money account = Workflow.newActivityStub(Money.class);
     private final RecipeCreator recipeCreator = Workflow.newActivityStub(RecipeCreator.class);
-    private final Email emailer = Workflow.newActivityStub(Email.class);
-
+    private final GroceryBroker broker = Workflow.newActivityStub(GroceryBroker.class);
 
     // Workflow Entrypoint.
     @Override
-    public void generateRecipe(String fromAccountId, String toAccountId, String referenceId,
+    public void generateRecipe(String fromAccountId, String toAccountId, String idempotencyKey,
                                String ingredients, String email) {
         Saga saga = new Saga(new Saga.Options.Builder().build());
         try {
-            chargeAccounts(fromAccountId, toAccountId, referenceId, saga);
+            chargeAccounts(fromAccountId, toAccountId, idempotencyKey, saga);
+            // "Fail forward" compensation already built in with Temporal via retries if we have
+            // problems connecting to the AI recipe service, so no explicit compensation necessary.
             String result = recipeCreator.make(ingredients);
-            emailer.send(email, result);
+            broker.orderGroceries(ingredients);
+            saga.addCompensation(broker::cancelOrder, ingredients, fromAccountId, idempotencyKey);
+            shareResult(email, result);
         } catch (ActivityFailure e) {
-            emailer.sendFailureEmail(email);
             saga.compensate();
             throw e;
         }
     }
 
-    private void chargeAccounts(String fromAccountId, String toAccountId, String referenceId,
+    private void chargeAccounts(String fromAccountId, String toAccountId, String idempotencyKey,
                                 Saga saga) {
         // Move the $$.
-        account.withdraw(fromAccountId, referenceId, price);
-        saga.addCompensation(account::deposit, fromAccountId, referenceId, price);
+        account.withdraw(fromAccountId, idempotencyKey, price);
+        saga.addCompensation(account::deposit, fromAccountId, idempotencyKey, price);
 
-        account.deposit(toAccountId, referenceId, price);
-        saga.addCompensation(account::withdraw, toAccountId, referenceId, price);
+        account.deposit(toAccountId, idempotencyKey, price);
+        saga.addCompensation(account::withdraw, toAccountId, idempotencyKey, price);
+    }
+
+    private void shareResult(String emailAddress, String recipe) {
+        System.out.printf(
+                "\nSending email with recipe to %s.\n", emailAddress);
     }
 }
