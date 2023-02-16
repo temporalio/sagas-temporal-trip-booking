@@ -13,7 +13,6 @@ import io.temporal.worker.Worker;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
-import org.mockito.ArgumentMatchers;
 
 public class RecipeCreatorGenerationWorkflowTest {
 
@@ -41,20 +40,23 @@ public class RecipeCreatorGenerationWorkflowTest {
         String acct2 = "account2";
         String reference = "idempotencyKey1";
         String email = "foo@bar.com";
-        Money activities = mock(MoneyImpl.class);
-        worker.registerActivitiesImplementations(activities);
+        GeographicLocation location = new GeographicLocation(40.7602, 73.9844);
+        Money money = mock(MoneyImpl.class);
+        worker.registerActivitiesImplementations(money);
         RecipeCreator creator = mock(RecipeCreatorImpl.class);
         when(creator.make(ingredients)).thenReturn("recipe");
         worker.registerActivitiesImplementations(creator);
+        GroceryBroker broker = mock(GroceryBrokerImpl.class);
+        worker.registerActivitiesImplementations(broker);
 
         testEnv.start();
         WorkflowOptions options = WorkflowOptions.newBuilder()
                 .setTaskQueue(Shared.RECIPE_GENERATION_TASK_QUEUE)
                 .build();
         RecipeGenerationWorkflow workflow = workflowClient.newWorkflowStub(RecipeGenerationWorkflow.class, options);
-        workflow.generateRecipe(acct1, acct2, reference, ingredients, email);
-        verify(activities).withdraw(eq(acct1), eq(reference), eq(1.99));
-        verify(activities).deposit(eq(acct2), eq(reference), eq(1.99));
+        workflow.generateRecipe(acct1, acct2, reference, ingredients, location, email);
+        verify(money).withdraw(eq(acct1), eq(reference), eq(1.99));
+        verify(money).deposit(eq(acct2), eq(reference), eq(1.99));
         verify(creator).make(eq(ingredients));
     }
 }

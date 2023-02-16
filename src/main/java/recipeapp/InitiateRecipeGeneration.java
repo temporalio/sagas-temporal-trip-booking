@@ -24,8 +24,9 @@ public class InitiateRecipeGeneration {
         String toAccount = "002-002";
         String ingredients = "Fritos\nChili\nShredded cheddar cheese\nSweet white or red onions, diced small\nSour cream";
         String emailAddress = "foo@bar.com";
+        GeographicLocation location = new GeographicLocation(47.6097, 122.3422);
         WorkflowExecution we = WorkflowClient.start(workflow::generateRecipe, fromAccount,
-                toAccount, transferReferenceId, ingredients, emailAddress);
+                toAccount, transferReferenceId, ingredients, location, emailAddress);
         System.out.printf("\nCharge from account %s to account %s is processing\n", fromAccount, toAccount);
         System.out.printf("\nWorkflowID: %s RunID: %s", we.getWorkflowId(), we.getRunId());
         System.exit(0);

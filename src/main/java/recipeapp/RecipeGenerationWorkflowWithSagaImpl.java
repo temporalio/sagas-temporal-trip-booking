@@ -14,15 +14,15 @@ public class RecipeGenerationWorkflowWithSagaImpl implements RecipeGenerationWor
     // Workflow Entrypoint.
     @Override
     public void generateRecipe(String fromAccountId, String toAccountId, String idempotencyKey,
-                               String ingredients, String email) {
+                               String ingredients, GeographicLocation location, String email) {
         Saga saga = new Saga(new Saga.Options.Builder().build());
         try {
             chargeAccounts(fromAccountId, toAccountId, idempotencyKey, saga);
             // "Fail forward" compensation already built in with Temporal via retries if we have
             // problems connecting to the AI recipe service, so no explicit compensation necessary.
             String result = recipeCreator.make(ingredients);
-            broker.orderGroceries(ingredients);
-            saga.addCompensation(broker::cancelOrder, ingredients, fromAccountId, idempotencyKey);
+            broker.orderGroceries(ingredients, location, fromAccountId, idempotencyKey);
+            saga.addCompensation(broker::cancelOrder, fromAccountId, idempotencyKey);
             shareResult(email, result);
         } catch (ActivityFailure e) {
             saga.compensate();
@@ -42,6 +42,6 @@ public class RecipeGenerationWorkflowWithSagaImpl implements RecipeGenerationWor
 
     private void shareResult(String emailAddress, String recipe) {
         System.out.printf(
-                "\nSending email with recipe to %s.\n", emailAddress);
+                "\nSending email with recipe to %s. Recipe contents: %s\n", emailAddress, recipe);
     }
 }

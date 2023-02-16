@@ -1,26 +1,20 @@
 package recipeapp;
 
-import io.temporal.activity.ActivityMethod;
-
-public class GroceryBrokerImpl {
+public class GroceryBrokerImpl implements GroceryBroker {
     @Override
-    public boolean orderGroceries(String ingredients,
-                                  GeographicLocation location, String fromAccountId,
-                                  String idempotencyKey) {
-        System.out.printf("Calculating nearest grocery store given coordinates %d, %d",
+    public void orderGroceries(String ingredients,
+                               GeographicLocation location, String fromAccountId,
+                               String idempotencyKey) {
+        System.out.printf("\nCalculating nearest grocery store given coordinates %f, %f\n",
                 location.getLatitude(), location.getLongitude());
-        System.out.printf("Ordering %s at local grocery on behalf of user, charging account %s, " +
-                        "order number %s",
+        System.out.printf("\nOrdering %s at local grocery on behalf of user, charging account %s," +
+                        " order number %s\n",
                 ingredients, fromAccountId, idempotencyKey);
-        // Simulating the API calls were successful in reserving groceries and there were
-        // sufficient funds.
-        return true;
     }
 
     @Override
-    public boolean cancelOrder(String fromAccountId, String idempotencyKey) {
-        System.out.printf("Canceling order %s and refunding money to account %s", idempotencyKey,
-                fromAccountId);
-        return true;
+    public void cancelOrder(String fromAccountId, String idempotencyKey) {
+        System.out.printf("\nCanceling order %s and refunding money to account %s\n",
+                idempotencyKey, fromAccountId);
     }
 }

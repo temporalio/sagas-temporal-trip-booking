@@ -1,13 +1,7 @@
 package recipeapp;
 
-import io.temporal.activity.ActivityOptions;
 import io.temporal.failure.ActivityFailure;
 import io.temporal.workflow.Workflow;
-import io.temporal.common.RetryOptions;
-
-import java.time.Duration;
-import java.util.HashMap;
-import java.util.Map;
 
 // Implementation of the workflow using our built-in failure handling.
 
@@ -15,46 +9,54 @@ public class RecipeGenerationWorkflowImpl implements RecipeGenerationWorkflow {
     private static final int priceInCents = 199;
     private final Money account = Workflow.newActivityStub(Money.class);
     private final RecipeCreator recipeCreator = Workflow.newActivityStub(RecipeCreator.class);
+    private final GroceryBroker broker = Workflow.newActivityStub(GroceryBrokerImpl.class);
 
     // Workflow Entrypoint.
     @Override
-    public void generateRecipe(String fromAccountId, String toAccountId, String referenceId,
-                               String ingredients, String email) {
+    public void generateRecipe(String fromAccountId, String toAccountId, String idempotencyKey,
+                               String ingredients, GeographicLocation location, String email) {
         try {
-            chargeAccounts(fromAccountId, toAccountId, referenceId);
+            chargeAccounts(fromAccountId, toAccountId, idempotencyKey);
+            // "Fail forward" compensation already built in with Temporal via retries if we have
+            // problems connecting to the AI recipe service, so no explicit compensation necessary.
+            String result = recipeCreator.make(ingredients);
             try {
-                String result = recipeCreator.make(ingredients);
-                sendEmail(email, result);
+                broker.orderGroceries(ingredients, location, fromAccountId, idempotencyKey);
             } catch (ActivityFailure a) {
-                recipeCreator.cancelGeneration();
                 // Refund the money.
-                chargeAccounts(toAccountId, fromAccountId, referenceId);
-                throw a;
+                chargeAccounts(toAccountId, fromAccountId, idempotencyKey);
+                broker.cancelOrder(fromAccountId, idempotencyKey);
+                sendFailureEmail(email);
             }
+            shareResult(email, result);
         } catch (ActivityFailure a) {
+            // Refund the money.
+            chargeAccounts(toAccountId, fromAccountId, idempotencyKey);
             sendFailureEmail(email);
-        }
-    }
-
-    private void chargeAccounts(String fromAccountId, String toAccountId, String referenceId) throws ActivityFailure {
-        // Move the $$.
-        account.withdraw(fromAccountId, referenceId, priceInCents);
-        try {
-            account.deposit(toAccountId, referenceId, priceInCents);
-        } catch (ActivityFailure a) {
-            // Refund if we are unable to make the deposit.
-            account.deposit(fromAccountId, referenceId, priceInCents);
             throw a;
         }
     }
 
-    private void sendEmail(String emailAddress, String recipe) {
+    private void chargeAccounts(String fromAccountId, String toAccountId, String idempotencyKey) {
+        // Move the $$.
+        account.withdraw(fromAccountId, idempotencyKey, priceInCents);
+        try {
+            account.deposit(toAccountId, idempotencyKey, priceInCents);
+        } catch (ActivityFailure a) {
+            // Refund if we are unable to make the deposit.
+            account.deposit(fromAccountId, idempotencyKey, priceInCents);
+            throw a;
+        }
+    }
+
+    private void shareResult(String emailAddress, String recipe) {
         System.out.printf(
-                "\nSending email with recipe to %s.\n", emailAddress);
+                "\nSending email with recipe to %s. Recipe contents: %s\n", emailAddress, recipe);
     }
 
     private void sendFailureEmail(String emailAddress) {
-        System.out.printf("\nSending email to %s to say we could not generate a recipe.\n",
+        System.out.printf("\nSending email to %s to say we could not generate a recipe and order " +
+                        "ingredients.\n",
                 emailAddress);
     }
 }

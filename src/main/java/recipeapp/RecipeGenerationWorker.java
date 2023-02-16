@@ -18,8 +18,11 @@ public class RecipeGenerationWorker {
         // This Worker hosts both Workflow and Activity implementations.
         // Workflows are stateful so a type is needed to create instances.
         worker.registerWorkflowImplementationTypes(RecipeGenerationWorkflowImpl.class);
+        // Uncomment to do with Saga pattern:
+        //worker.registerWorkflowImplementationTypes(RecipeGenerationWorkflowWithSagaImpl.class);
         worker.registerActivitiesImplementations(new MoneyImpl());
         worker.registerActivitiesImplementations(new RecipeCreatorImpl());
+        worker.registerActivitiesImplementations(new GroceryBrokerImpl());
         // Start listening to the Task Queue.
         factory.start();
         //System.exit(0);
