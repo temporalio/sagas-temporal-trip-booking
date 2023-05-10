@@ -24,28 +24,32 @@ public class InitiateTripPlanning {
     public static void main(String[] args) throws Exception {
 
         WorkflowServiceStubs service = WorkflowServiceStubs.newLocalServiceStubs();
-        WorkflowOptions options = WorkflowOptions.newBuilder()
-                .setTaskQueue(Shared.TRIP_PLANNING_TASK_QUEUE)
-                .setWorkflowId("trip-planning-workflow")
-                .build();
-        DefaultDataConverter ddc =
-                DefaultDataConverter.newDefaultInstance()
-                        .withPayloadConverterOverrides(new CloudEventsPayloadConverter());
+        WorkflowOptions options = WorkflowOptions.newBuilder().setTaskQueue(
+                Shared.TRIP_PLANNING_TASK_QUEUE).setWorkflowId(
+                "trip-planning-workflow").build();
+        DefaultDataConverter ddc = DefaultDataConverter.newDefaultInstance().withPayloadConverterOverrides(
+                new CloudEventsPayloadConverter());
 
-        WorkflowClientOptions workflowClientOptions =
-                WorkflowClientOptions.newBuilder().setDataConverter(ddc).build();
+        WorkflowClientOptions workflowClientOptions = WorkflowClientOptions.newBuilder().setDataConverter(
+                ddc).build();
 
-        WorkflowClient client = WorkflowClient.newInstance(service, workflowClientOptions);
+        WorkflowClient client = WorkflowClient.newInstance(service,
+                                                           workflowClientOptions);
 
-        TripPlannerWorkflow workflow = client.newWorkflowStub(TripPlannerWorkflow.class, options);
-        BookingInfo info = new BookingInfo(new CreditCardInfo(1, YearMonth.of(2023, 3), 123),
+        IWorkflow workflow = client.newWorkflowStub(IWorkflow.class, options);
+        BookingInfo info = new BookingInfo(
+                new CreditCardInfo(1, YearMonth.of(2023, 3), 123),
                 "Emily Fortuna", "123 Temporal Lane");
         LocalDate start = LocalDate.of(2023, 3, 1);
         LocalDate end = LocalDate.of(2023, 3, 15);
         String idempotencyId = "1";
-        WorkflowExecution we = WorkflowClient.start(workflow::bookVacation, info, start, end, idempotencyId);
-        System.out.printf("\nPlanning vacation is processing %s %s\n", start, end);
-        System.out.printf("\nWorkflowID: %s RunID: %s", we.getWorkflowId(), we.getRunId());
+        WorkflowExecution we = WorkflowClient.start(workflow::bookVacation,
+                                                    info, start, end,
+                                                    idempotencyId);
+        System.out.printf("\nPlanning vacation is processing %s %s\n", start,
+                          end);
+        System.out.printf("\nWorkflowID: %s RunID: %s", we.getWorkflowId(),
+                          we.getRunId());
         System.exit(0);
     }
 
@@ -53,14 +57,15 @@ public class InitiateTripPlanning {
         ObjectMapper objectMapper = new ObjectMapper();
 
         // Create the Crypto Context (password based)
-        PasswordCryptoContext cryptoContext =
-                new PasswordCryptoContext(
-                        "secure password", // decrypt password
-                        "secure decryption password", // encrypt password
-                        PasswordCryptoContext.CIPHER_NAME, // cipher name
-                        PasswordCryptoContext.KEY_NAME); // key generator names
-        EncryptionService encryptionService = new EncryptionService(objectMapper, cryptoContext);
-        objectMapper.registerModule(new CryptoModule().addEncryptionService(encryptionService));
+        PasswordCryptoContext cryptoContext = new PasswordCryptoContext(
+                "secure password", // decrypt password
+                "secure decryption password", // encrypt password
+                PasswordCryptoContext.CIPHER_NAME, // cipher name
+                PasswordCryptoContext.KEY_NAME); // key generator names
+        EncryptionService encryptionService = new EncryptionService(
+                objectMapper, cryptoContext);
+        objectMapper.registerModule(
+                new CryptoModule().addEncryptionService(encryptionService));
         objectMapper.registerModule(new JavaTimeModule());
 
         return new JacksonJsonPayloadConverter(objectMapper);

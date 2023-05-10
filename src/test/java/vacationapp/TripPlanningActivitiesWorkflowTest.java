@@ -5,16 +5,12 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 
 import io.temporal.client.WorkflowClient;
-import io.temporal.client.WorkflowOptions;
 import io.temporal.testing.TestWorkflowEnvironment;
 import io.temporal.worker.Worker;
 
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
-
-import java.time.LocalDate;
-import java.time.YearMonth;
 
 public class TripPlanningActivitiesWorkflowTest {
 
@@ -26,7 +22,7 @@ public class TripPlanningActivitiesWorkflowTest {
     public void setUp() {
         testEnv = TestWorkflowEnvironment.newInstance();
         worker = testEnv.newWorker(Shared.TRIP_PLANNING_TASK_QUEUE);
-        worker.registerWorkflowImplementationTypes(TripPlannerWorkflowImpl.class);
+        worker.registerWorkflowImplementationTypes(TripPlanningWorkflow.class);
         workflowClient = testEnv.getWorkflowClient();
     }
 

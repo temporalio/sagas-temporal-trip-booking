@@ -1,28 +1,57 @@
 package vacationapp;
 
-import io.temporal.activity.ActivityInterface;
-import io.temporal.activity.ActivityMethod;
-
 import java.time.LocalDate;
 
-@ActivityInterface
-public interface TripPlanningActivities {
+public class TripPlanningActivities implements IActivities {
 
-    @ActivityMethod
-    int bookHotel(BookingInfo bookingInfo, LocalDate start, LocalDate end, String idempotencyId);
+    @Override
+    public int bookHotel(BookingInfo bookingInfo, LocalDate start,
+                         LocalDate end, String idempotencyId) {
+        System.out.printf("\nSimulating hotel booking. IdempotencyId: %s\n",
+                          idempotencyId);
+        // Uncomment the following line to simulate an Activity error.
+        // throw new RuntimeException("Hotel booking error");
+        return 100; // the "confirmation id"
+    }
 
-    @ActivityMethod
-    int bookFlight(BookingInfo bookingInfo, LocalDate start, LocalDate end, String idempotencyId);
+    @Override
+    public int bookFlight(BookingInfo bookingInfo, LocalDate start,
+                          LocalDate end, String idempotencyId) {
+        System.out.printf("\nSimulating flight booking. IdempotencyId: %s\n",
+                          idempotencyId);
+        // Uncomment the following line to simulate an Activity error.
+        // throw new RuntimeException("Flight booking error");
+        return 100; // the "confirmation id"
+    }
 
-    @ActivityMethod
-    int bookExcursion(BookingInfo bookingInfo, LocalDate start, LocalDate end, String idempotencyId);
+    @Override
+    public int bookExcursion(BookingInfo bookingInfo, LocalDate start,
+                             LocalDate end, String idempotencyId) {
+        System.out.printf("\nSimulating excursion booking. IdempotencyId: %s\n",
+                          idempotencyId);
+        // Uncomment the following line to simulate an Activity error.
+        // throw new RuntimeException("Excursion booking error");
+        return 100; // the "confirmation id"
+    }
 
-    @ActivityMethod
-    boolean cancelHotel(int reservationNumber, String idempotencyId);
+    @Override
+    public boolean cancelHotel(String idempotencyId) {
+        System.out.printf("\nCancelling hotel using idempotencyId: %s\n",
+                          idempotencyId);
+        return true;
+    }
 
-    @ActivityMethod
-    boolean cancelFlight(int reservationNumber, String idempotencyId);
+    @Override
+    public boolean cancelFlight(String idempotencyId) {
+        System.out.printf("\nCancelling flight using idempotencyId: %s\n",
+                          idempotencyId);
+        return true;
+    }
 
-    @ActivityMethod
-    boolean cancelExcursion(int reservationNumber, String idempotencyId);
+    @Override
+    public boolean cancelExcursion(String idempotencyId) {
+        System.out.printf("\nCancelling excursion using idempotencyId: %s\n",
+                          idempotencyId);
+        return true;
+    }
 }

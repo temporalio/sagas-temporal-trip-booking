@@ -11,7 +11,7 @@ import java.time.LocalDate;
 import java.util.HashMap;
 import java.util.Map;
 
-public class TripPlannerWorkflowImpl implements TripPlannerWorkflow {
+public class TripPlanningWorkflow implements IWorkflow {
     private static final String BOOK_VACATION = "bookVacation";
     // RetryOptions specify how to automatically handle retries when Activities fail.
     private final RetryOptions retryoptions = RetryOptions.newBuilder().setInitialInterval(
@@ -29,8 +29,8 @@ public class TripPlannerWorkflowImpl implements TripPlannerWorkflow {
         put(BOOK_VACATION, ActivityOptions.newBuilder().setHeartbeatTimeout(
                 Duration.ofSeconds(5)).build());
     }};
-    private final TripPlanningActivities activities = Workflow.newActivityStub(
-            TripPlanningActivities.class, defaultActivityOptions,
+    private final IActivities activities = Workflow.newActivityStub(
+            IActivities.class, defaultActivityOptions,
             perActivityMethodOptions);
 
     // The transfer method is the entry point to the Workflow.

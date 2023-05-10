@@ -17,10 +17,9 @@ public class TripPlanningWorker {
         Worker worker = factory.newWorker(Shared.TRIP_PLANNING_TASK_QUEUE);
         // This Worker hosts both Workflow and Activity implementations.
         // Workflows are stateful so a type is needed to create instances.
-        worker.registerWorkflowImplementationTypes(TripPlannerWorkflowImpl.class);
-        worker.registerActivitiesImplementations(new TripPlannerImpl());
+        worker.registerWorkflowImplementationTypes(TripPlanningWorkflow.class);
+        worker.registerActivitiesImplementations(new TripPlanningActivities());
         // Start listening to the Task Queue.
         factory.start();
-        //System.exit(0);
     }
 }
