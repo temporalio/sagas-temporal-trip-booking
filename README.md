@@ -17,7 +17,7 @@ To start the Workflow, either run the InitiateMoneyTransfer class from IntelliJ 
 root run:
 
 ```
-./gradlew initiateGeneration
+./gradlew initiatePlanning
 ```
 
 To start the Worker, either run the MoneyTransferWorker class from IntelliJ or from the project root
