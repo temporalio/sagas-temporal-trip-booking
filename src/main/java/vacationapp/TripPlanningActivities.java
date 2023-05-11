@@ -30,8 +30,8 @@ public class TripPlanningActivities implements IActivities {
         System.out.printf("\nSimulating excursion booking. IdempotencyId: %s\n",
                           idempotencyId);
         // Uncomment the following line to simulate an Activity error.
-        // throw new RuntimeException("Excursion booking error");
-        return 100; // the "confirmation id"
+        throw new RuntimeException("Excursion booking error");
+        //return 100; // the "confirmation id"
     }
 
     @Override

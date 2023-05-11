@@ -1,35 +1,52 @@
 package vacationapp;
 
-import com.codingrodent.jackson.crypto.Encrypt;
+/*import com.codingrodent.jackson.crypto.Encrypt;
 import com.fasterxml.jackson.annotation.JsonProperty;
-
+*/
 public class BookingInfo {
-    private final CreditCardInfo _creditCardInfo;
-    private final String _name;
-    private final String _address;
+    private CreditCardInfo _creditCardInfo;
+    private String _name;
+    private String _address;
 
-    public BookingInfo(CreditCardInfo creditCardInfo, String name, String address) {
+    // Public no-args constructor needed for Temporal payloads.
+    public BookingInfo() {
+    }
+
+    public BookingInfo(CreditCardInfo creditCardInfo, String name,
+                       String address) {
         this._creditCardInfo = creditCardInfo;
         this._name = name;
         this._address = address;
     }
 
-    @JsonProperty
-    @Encrypt
+    /*@JsonProperty
+    @Encrypt*/
     public CreditCardInfo getCreditCardInfo() {
         return _creditCardInfo;
     }
 
-    @JsonProperty
-    @Encrypt
+    public void setCreditCardInfo(CreditCardInfo info) {
+        _creditCardInfo = info;
+    }
+
+    /*@JsonProperty
+    @Encrypt*/
     public String getName() {
         return _name;
     }
 
-    @JsonProperty
-    @Encrypt
+    public void setName(String name) {
+        _name = name;
+    }
+
+    /*@JsonProperty
+    @Encrypt*/
     public String getAddress() {
         return _address;
+    }
+
+    public void setAddress(String address) {
+        _address = address;
     }
 
     public String toString() {

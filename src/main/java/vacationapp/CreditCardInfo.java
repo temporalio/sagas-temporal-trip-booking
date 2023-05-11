@@ -1,15 +1,19 @@
 package vacationapp;
 
-import com.codingrodent.jackson.crypto.Encrypt;
-import com.fasterxml.jackson.annotation.JsonProperty;
+/*import com.codingrodent.jackson.crypto.Encrypt;
+import com.fasterxml.jackson.annotation.JsonProperty;*/
 
 
 import java.time.YearMonth;
 
 public class CreditCardInfo {
-    private final int _number;
-    private final YearMonth _expiration;
-    private final int _ccv;
+    private int _number;
+    private YearMonth _expiration;
+    private int _ccv;
+
+    // Public no-args constructor needed for Temporal payloads.
+    public CreditCardInfo() {
+    }
 
     public CreditCardInfo(int number, YearMonth expiration, int ccv) {
         this._number = number;
@@ -17,22 +21,34 @@ public class CreditCardInfo {
         this._ccv = ccv;
     }
 
-    @JsonProperty
-    @Encrypt
+    /*@JsonProperty
+    @Encrypt*/
     public int getNumber() {
         return _number;
     }
 
-    @JsonProperty
-    @Encrypt
+    public void setNumber(int number) {
+        _number = number;
+    }
+
+    /*@JsonProperty
+    @Encrypt*/
     public YearMonth getExpiration() {
         return _expiration;
     }
 
-    @JsonProperty
-    @Encrypt
+    public void setExpiration(YearMonth expiration) {
+        _expiration = expiration;
+    }
+
+    /*@JsonProperty
+    @Encrypt*/
     public int getCcv() {
         return _ccv;
+    }
+
+    public void setCcv(int ccv) {
+        _ccv = ccv;
     }
 
     public String toString() {

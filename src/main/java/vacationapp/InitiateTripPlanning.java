@@ -1,12 +1,13 @@
 package vacationapp;
 
-import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
+/*import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import com.codingrodent.jackson.crypto.CryptoModule;
 import com.codingrodent.jackson.crypto.EncryptionService;
 import com.codingrodent.jackson.crypto.PasswordCryptoContext;
 import io.cloudevents.CloudEvent;
 import io.cloudevents.core.builder.CloudEventBuilder;
-import io.cloudevents.jackson.JsonCloudEventData;
+import io.cloudevents.jackson.JsonCloudEventData;*/
+
 import com.fasterxml.jackson.databind.ObjectMapper;
 import io.temporal.api.common.v1.WorkflowExecution;
 import io.temporal.client.WorkflowClient;
@@ -22,19 +23,19 @@ import java.time.YearMonth;
 public class InitiateTripPlanning {
 
     public static void main(String[] args) throws Exception {
-
         WorkflowServiceStubs service = WorkflowServiceStubs.newLocalServiceStubs();
         WorkflowOptions options = WorkflowOptions.newBuilder().setTaskQueue(
                 Shared.TRIP_PLANNING_TASK_QUEUE).setWorkflowId(
                 "trip-planning-workflow").build();
-        DefaultDataConverter ddc = DefaultDataConverter.newDefaultInstance().withPayloadConverterOverrides(
+        /*DefaultDataConverter ddc =
+                DefaultDataConverter.newDefaultInstance().withPayloadConverterOverrides(
                 new CloudEventsPayloadConverter());
 
         WorkflowClientOptions workflowClientOptions = WorkflowClientOptions.newBuilder().setDataConverter(
-                ddc).build();
+                ddc).build();*/
 
-        WorkflowClient client = WorkflowClient.newInstance(service,
-                                                           workflowClientOptions);
+        WorkflowClient client = WorkflowClient.newInstance(service);
+        //workflowClientOptions);
 
         IWorkflow workflow = client.newWorkflowStub(IWorkflow.class, options);
         BookingInfo info = new BookingInfo(
@@ -53,7 +54,9 @@ public class InitiateTripPlanning {
         System.exit(0);
     }
 
-    private static JacksonJsonPayloadConverter getCryptoJacksonJsonPayloadConverter() {
+    /*private static JacksonJsonPayloadConverter
+    getCryptoJacksonJsonPayloadConverter() {
+
         ObjectMapper objectMapper = new ObjectMapper();
 
         // Create the Crypto Context (password based)
@@ -69,5 +72,5 @@ public class InitiateTripPlanning {
         objectMapper.registerModule(new JavaTimeModule());
 
         return new JacksonJsonPayloadConverter(objectMapper);
-    }
+    }*/
 }

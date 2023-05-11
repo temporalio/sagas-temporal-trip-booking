@@ -17,7 +17,7 @@ public class TripPlanningWorkflow implements IWorkflow {
     private final RetryOptions retryoptions = RetryOptions.newBuilder().setInitialInterval(
             Duration.ofSeconds(1)).setMaximumInterval(
             Duration.ofSeconds(100)).setBackoffCoefficient(
-            2).setMaximumAttempts(500).build();
+            2).setMaximumAttempts(2).build();
     private final ActivityOptions defaultActivityOptions = ActivityOptions.newBuilder()
             // Timeout options specify when to automatically timeout Activities if the process is taking too long.
             .setStartToCloseTimeout(Duration.ofSeconds(5))
