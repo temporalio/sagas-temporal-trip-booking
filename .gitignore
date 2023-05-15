@@ -18,3 +18,7 @@ build
 
 # Intellij
 .idea
+.vscode
+
+java/bin
+**/.DS_Store
