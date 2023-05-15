@@ -31,8 +31,8 @@ public class TripPlanningActivities implements IActivities {
                 "\nSimulating excursion booking. idempotencyKey: %s\n",
                 idempotencyKey);
         // Uncomment the following line to simulate an Activity error.
-        throw new RuntimeException("Excursion booking error");
-        //return 100; // the "confirmation id"
+        //throw new RuntimeException("Excursion booking error");
+        return 100; // the "confirmation id"
     }
 
     @Override

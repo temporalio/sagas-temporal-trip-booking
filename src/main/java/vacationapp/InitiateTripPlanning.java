@@ -11,7 +11,8 @@ import java.time.YearMonth;
 public class InitiateTripPlanning {
 
     public static void main(String[] args) throws Exception {
-        WorkflowServiceStubs service = WorkflowServiceStubs.newLocalServiceStubs();
+        WorkflowServiceStubs service =
+                WorkflowServiceStubs.newLocalServiceStubs();
         WorkflowOptions options = WorkflowOptions.newBuilder().setTaskQueue(
                 Shared.TRIP_PLANNING_TASK_QUEUE).setWorkflowId(
                 "trip-planning-workflow").build();
@@ -24,7 +25,7 @@ public class InitiateTripPlanning {
                 "Emily Fortuna", "123 Temporal Lane");
         LocalDate start = LocalDate.of(2023, 3, 1);
         LocalDate end = LocalDate.of(2023, 3, 15);
-        String idempotencyKey = "1";
+        String idempotencyKey = java.util.UUID.randomUUID().toString();
         WorkflowExecution we = WorkflowClient.start(workflow::bookVacation,
                                                     info, start, end,
                                                     idempotencyKey);
