@@ -1,9 +1,5 @@
 package vacationapp;
 
-/*import com.codingrodent.jackson.crypto.Encrypt;
-import com.fasterxml.jackson.annotation.JsonProperty;*/
-
-
 import java.time.YearMonth;
 
 public class CreditCardInfo {
@@ -21,8 +17,6 @@ public class CreditCardInfo {
         this._ccv = ccv;
     }
 
-    /*@JsonProperty
-    @Encrypt*/
     public int getNumber() {
         return _number;
     }
@@ -31,8 +25,6 @@ public class CreditCardInfo {
         _number = number;
     }
 
-    /*@JsonProperty
-    @Encrypt*/
     public YearMonth getExpiration() {
         return _expiration;
     }
@@ -41,8 +33,6 @@ public class CreditCardInfo {
         _expiration = expiration;
     }
 
-    /*@JsonProperty
-    @Encrypt*/
     public int getCcv() {
         return _ccv;
     }
@@ -53,5 +43,15 @@ public class CreditCardInfo {
 
     public String toString() {
         return String.format("%d %s %d", _number, _expiration, _ccv);
+    }
+
+    public boolean equals(Object obj) {
+        if (obj instanceof CreditCardInfo) {
+            CreditCardInfo info = (CreditCardInfo) obj;
+            return info.getCcv() == getCcv() &&
+                    info.getNumber() == getNumber() &&
+                    info.getExpiration() == getExpiration();
+        }
+        return false;
     }
 }

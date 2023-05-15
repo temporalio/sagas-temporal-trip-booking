@@ -1,8 +1,6 @@
 package vacationapp;
 
-/*import com.codingrodent.jackson.crypto.Encrypt;
-import com.fasterxml.jackson.annotation.JsonProperty;
-*/
+
 public class BookingInfo {
     private CreditCardInfo _creditCardInfo;
     private String _name;
@@ -19,8 +17,6 @@ public class BookingInfo {
         this._address = address;
     }
 
-    /*@JsonProperty
-    @Encrypt*/
     public CreditCardInfo getCreditCardInfo() {
         return _creditCardInfo;
     }
@@ -29,8 +25,6 @@ public class BookingInfo {
         _creditCardInfo = info;
     }
 
-    /*@JsonProperty
-    @Encrypt*/
     public String getName() {
         return _name;
     }
@@ -39,8 +33,6 @@ public class BookingInfo {
         _name = name;
     }
 
-    /*@JsonProperty
-    @Encrypt*/
     public String getAddress() {
         return _address;
     }
@@ -51,5 +43,16 @@ public class BookingInfo {
 
     public String toString() {
         return String.format("%s %s %s", _name, _address, _creditCardInfo);
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (obj instanceof BookingInfo) {
+            BookingInfo info = (BookingInfo) obj;
+            return info.getAddress() == getAddress() &&
+                    info.getName() == getName() &&
+                    info.getCreditCardInfo() == getCreditCardInfo();
+        }
+        return false;
     }
 }
