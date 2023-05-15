@@ -37,7 +37,7 @@ public class TripPlanningActivitiesWorkflowTest {
                 "Emily Fortuna", "123 Temporal Lane");
         LocalDate start = LocalDate.of(2023, 3, 1);
         LocalDate end = LocalDate.of(2023, 3, 15);
-        String idempotencyId = "1";
+        String idempotencyKey = "1";
         TripPlanningActivities activities = mock(TripPlannerImpl.class);
         worker.registerActivitiesImplementations(activities);*/
         /*RecipeCreator creator = mock(RecipeCreatorImpl.class);
@@ -49,7 +49,7 @@ public class TripPlanningActivitiesWorkflowTest {
                 .setTaskQueue(Shared.TRIP_PLANNING_TASK_QUEUE)
                 .build();
         TripPlannerWorkflow workflow = workflowClient.newWorkflowStub(TripPlannerWorkflow.class, options);
-        workflow.bookVacation(info, start, end, idempotencyId);
-        verify(workflow).boo(eq(info), eq(start), eq(end), eq(idempotencyId));*/
+        workflow.bookVacation(info, start, end, idempotencyKey);
+        verify(workflow).boo(eq(info), eq(start), eq(end), eq(idempotencyKey));*/
     }
 }

@@ -10,22 +10,22 @@ public interface IActivities {
 
     @ActivityMethod
     int bookHotel(BookingInfo bookingInfo, LocalDate start, LocalDate end,
-                  String idempotencyId);
+                  String idempotencyKey);
 
     @ActivityMethod
     int bookFlight(BookingInfo bookingInfo, LocalDate start, LocalDate end,
-                   String idempotencyId);
+                   String idempotencyKey);
 
     @ActivityMethod
     int bookExcursion(BookingInfo bookingInfo, LocalDate start, LocalDate end,
-                      String idempotencyId);
+                      String idempotencyKey);
 
     @ActivityMethod
-    boolean cancelHotel(String idempotencyId);
+    boolean cancelHotel(String idempotencyKey);
 
     @ActivityMethod
-    boolean cancelFlight(String idempotencyId);
+    boolean cancelFlight(String idempotencyKey);
 
     @ActivityMethod
-    boolean cancelExcursion(String idempotencyId);
+    boolean cancelExcursion(String idempotencyKey);
 }

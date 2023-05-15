@@ -37,17 +37,17 @@ public class TripPlanningWorkflow implements IWorkflow {
     // Activity method executions can be orchestrated here or from within other Activity methods.
     @Override
     public void bookVacation(BookingInfo bookingInfo, LocalDate start,
-                             LocalDate end, String idempotencyId) {
+                             LocalDate end, String idempotencyKey) {
         Saga saga = new Saga(new Saga.Options.Builder().build());
         try {
-            saga.addCompensation(activities::cancelHotel, idempotencyId);
-            activities.bookHotel(bookingInfo, start, end, idempotencyId);
+            saga.addCompensation(activities::cancelHotel, idempotencyKey);
+            activities.bookHotel(bookingInfo, start, end, idempotencyKey);
 
-            saga.addCompensation(activities::cancelFlight, idempotencyId);
-            activities.bookFlight(bookingInfo, start, end, idempotencyId);
+            saga.addCompensation(activities::cancelFlight, idempotencyKey);
+            activities.bookFlight(bookingInfo, start, end, idempotencyKey);
 
-            saga.addCompensation(activities::cancelExcursion, idempotencyId);
-            activities.bookExcursion(bookingInfo, start, end, idempotencyId);
+            saga.addCompensation(activities::cancelExcursion, idempotencyKey);
+            activities.bookExcursion(bookingInfo, start, end, idempotencyKey);
         } catch (ActivityFailure e) {
             saga.compensate();
             throw e;

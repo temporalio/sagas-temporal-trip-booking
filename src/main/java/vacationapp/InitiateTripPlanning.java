@@ -43,10 +43,10 @@ public class InitiateTripPlanning {
                 "Emily Fortuna", "123 Temporal Lane");
         LocalDate start = LocalDate.of(2023, 3, 1);
         LocalDate end = LocalDate.of(2023, 3, 15);
-        String idempotencyId = "1";
+        String idempotencyKey = "1";
         WorkflowExecution we = WorkflowClient.start(workflow::bookVacation,
                                                     info, start, end,
-                                                    idempotencyId);
+                                                    idempotencyKey);
         System.out.printf("\nPlanning vacation is processing %s %s\n", start,
                           end);
         System.out.printf("\nWorkflowID: %s RunID: %s", we.getWorkflowId(),
