@@ -1,4 +1,3 @@
-// @@@SNIPSTART hello-world-project-template-go-workflow-test
 package app
 
 import (
@@ -15,15 +14,14 @@ func Test_Workflow(t *testing.T) {
 	env := testSuite.NewTestWorkflowEnvironment()
 
 	// Mock activity implementation
-	env.OnActivity(GetBowl, mock.Anything).Return(nil)
-	env.OnActivity(PutBowlAwayIfPresent, mock.Anything).Return(nil)
-	env.OnActivity(AddCereal, mock.Anything).Return(nil)
-	env.OnActivity(PutCerealBackInBoxIfPresent, mock.Anything).Return(nil)
-	env.OnActivity(AddMilk, mock.Anything).Return(nil)
+	env.OnActivity(BookHotel, mock.Anything).Return(nil)
+	env.OnActivity(CancelHotel, mock.Anything).Return(nil)
+	env.OnActivity(BookFlight, mock.Anything).Return(nil)
+	env.OnActivity(CancelFlight, mock.Anything).Return(nil)
+	env.OnActivity(BookExcursion, mock.Anything).Return(nil)
+	env.OnActivity(CancelExcursion, mock.Anything).Return(nil)
 
-	env.ExecuteWorkflow(BreakfastWorkflow)
+	env.ExecuteWorkflow(TripPlanningWorkflow)
 	require.True(t, env.IsWorkflowCompleted())
 	require.NoError(t, env.GetWorkflowError())
 }
-
-// @@@SNIPEND

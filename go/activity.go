@@ -3,29 +3,35 @@ package app
 import (
 	"context"
 	"fmt"
+	"time"
 )
 
-func GetBowl(ctx context.Context) error {
-	fmt.Println("Getting bowl")
+func BookHotel(ctx context.Context, bookingInfo BookingInfo, start time.Time, end time.Time, idempotencyKey string) error {
+	fmt.Println("Booking Hotel")
 	return nil
 }
 
-func PutBowlAwayIfPresent(ctx context.Context) error {
-	fmt.Println("Putting bowl away if bowl is out")
+func BookFlight(ctx context.Context, bookingInfo BookingInfo, start time.Time, end time.Time, idempotencyKey string) error {
+	fmt.Println("Booking Flight")
 	return nil
 }
 
-func AddCereal(ctx context.Context) error {
-	fmt.Println("Adding cereal")
+func BookExcursion(ctx context.Context, bookingInfo BookingInfo, start time.Time, end time.Time, idempotencyKey string) error {
+	fmt.Println("Booking Excursion")
 	return nil
 }
 
-func PutCerealBackInBoxIfPresent(ctx context.Context) error {
-	fmt.Println("Putting cereal back in box if there is cereal")
+func CancelHotel(ctx context.Context, idempotencyKey string) error {
+	fmt.Println("Canceling Hotel")
 	return nil
 }
 
-func AddMilk(ctx context.Context) error {
-	fmt.Println("Adding milk")
+func CancelFlight(ctx context.Context, idempotencyKey string) error {
+	fmt.Println("Canceling Flight")
+	return nil
+}
+
+func CancelExcursion(ctx context.Context, idempotencyKey string) error {
+	fmt.Println("Canceling Excursion")
 	return nil
 }

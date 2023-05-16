@@ -7,10 +7,10 @@ import (
 	"go.temporal.io/sdk/workflow"
 )
 
-func BreakfastWorkflow(ctx workflow.Context, parallelCompensations bool) (err error) {
+func TripPlanningWorkflow(ctx workflow.Context, info BookingInfo) (err error) {
 	options := workflow.ActivityOptions{
 		StartToCloseTimeout: time.Second * 5,
-		RetryPolicy:         &temporal.RetryPolicy{MaximumAttempts: 1},
+		RetryPolicy:         &temporal.RetryPolicy{MaximumAttempts: 2},
 	}
 
 	ctx = workflow.WithActivityOptions(ctx, options)
@@ -18,27 +18,30 @@ func BreakfastWorkflow(ctx workflow.Context, parallelCompensations bool) (err er
 	var compensations Compensations
 
 	defer func() {
-		// Defer is at the top so that it is executed regardless of which step might fail.
 		if err != nil {
 			// activity failed, and workflow context is canceled
 			disconnectedCtx, _ := workflow.NewDisconnectedContext(ctx)
-			compensations.Compensate(disconnectedCtx, parallelCompensations)
+			compensations.Compensate(disconnectedCtx, true)
 		}
 	}()
 
-	compensations.AddCompensation(PutBowlAwayIfPresent)
-	err = workflow.ExecuteActivity(ctx, GetBowl).Get(ctx, nil)
+	compensations.AddCompensation(CancelHotel)
+	err = workflow.ExecuteActivity(ctx, BookHotel, info).Get(ctx, nil)
 	if err != nil {
 		return err
 	}
 
-	compensations.AddCompensation(PutCerealBackInBoxIfPresent)
-	err = workflow.ExecuteActivity(ctx, AddCereal).Get(ctx, nil)
+	compensations.AddCompensation(CancelFlight)
+	err = workflow.ExecuteActivity(ctx, BookFlight, info).Get(ctx, nil)
 	if err != nil {
 		return err
 	}
 
-	err = workflow.ExecuteActivity(ctx, AddMilk).Get(ctx, nil)
+	compensations.AddCompensation(CancelExcursion)
+	err = workflow.ExecuteActivity(ctx, BookExcursion, info).Get(ctx, nil)
+	if err != nil {
+		return err
+	}
 
 	return err
 }

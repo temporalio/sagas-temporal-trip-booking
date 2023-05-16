@@ -1,4 +1,4 @@
-# Temporalmental Chef: An illustration of Sagas with Temporal, by generating bad recipes
+# Vacation Booking Saga app: An illustration of Sagas with Temporal by a vacation booking service
 
 ## Build the project
 

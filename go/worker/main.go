@@ -17,14 +17,15 @@ func main() {
 	defer c.Close()
 
 	// This worker hosts both Workflow and Activity functions
-	w := worker.New(c, app.BreakfastTaskQueue, worker.Options{})
-	w.RegisterWorkflow(app.BreakfastWorkflow)
+	w := worker.New(c, app.TripPlanningTaskQueue, worker.Options{})
+	w.RegisterWorkflow(app.TripPlanningWorkflow)
 
-	w.RegisterActivity(app.GetBowl)
-	w.RegisterActivity(app.PutBowlAwayIfPresent)
-	w.RegisterActivity(app.AddCereal)
-	w.RegisterActivity(app.PutCerealBackInBoxIfPresent)
-	w.RegisterActivity(app.AddMilk)
+	w.RegisterActivity(app.BookHotel)
+	w.RegisterActivity(app.CancelHotel)
+	w.RegisterActivity(app.BookFlight)
+	w.RegisterActivity(app.CancelFlight)
+	w.RegisterActivity(app.BookExcursion)
+	w.RegisterActivity(app.CancelExcursion)
 
 	// Start listening to the Task Queue
 	err = w.Run(worker.InterruptCh())

@@ -3,7 +3,6 @@ package main
 import (
 	"breakfast/app"
 	"context"
-	"flag"
 	"log"
 
 	"go.temporal.io/sdk/client"
@@ -19,14 +18,15 @@ func main() {
 	defer c.Close()
 
 	options := client.StartWorkflowOptions{
-		ID:        "breakfast-workflow",
-		TaskQueue: app.BreakfastTaskQueue,
+		ID:        "trip-planning-workflow",
+		TaskQueue: app.TripPlanningTaskQueue,
 	}
 
+	expiration := app.CreditCardExpiration{Year: 2023, Month: 5}
+	ccInfo := app.CreditCardInfo{Number: 123456789, Ccv: 123, Expiration: expiration}
+	info := app.BookingInfo{Name: "Emily", Address: "123 Temporal Lane", CcInfo: ccInfo}
 	// Start the Workflow
-	parallelCompensationsPtr := flag.Bool("parallel-compensations", false, "Execute compensations in parallel if possible.")
-	flag.Parse()
-	_, err = c.ExecuteWorkflow(context.Background(), options, app.BreakfastWorkflow, *parallelCompensationsPtr)
+	_, err = c.ExecuteWorkflow(context.Background(), options, app.TripPlanningWorkflow, info)
 
 	if err != nil {
 		log.Fatalln("unable to start Workflow", err)
