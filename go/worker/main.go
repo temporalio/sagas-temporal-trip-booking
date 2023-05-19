@@ -1,8 +1,8 @@
 package main
 
 import (
-	"breakfast/app"
 	"log"
+	"vacation/app"
 
 	"go.temporal.io/sdk/client"
 	"go.temporal.io/sdk/worker"

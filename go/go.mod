@@ -1,4 +1,4 @@
-module breakfast/app
+module vacation/app
 
 go 1.19
 
@@ -19,6 +19,8 @@ require (
 	github.com/grpc-ecosystem/go-grpc-middleware v1.3.0 // indirect
 	github.com/pborman/uuid v1.2.1 // indirect
 	github.com/pmezard/go-difflib v1.0.0 // indirect
+	github.com/rickb777/date v1.20.1 // indirect
+	github.com/rickb777/plural v1.4.1 // indirect
 	github.com/robfig/cron v1.2.0 // indirect
 	github.com/stretchr/objx v0.5.0 // indirect
 	go.temporal.io/api v1.19.1-0.20230322213042-07fb271d475b // indirect

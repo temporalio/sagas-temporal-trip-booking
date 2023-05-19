@@ -7,7 +7,7 @@ Ensure you have Go 1.16 or later installed locally, and that you have Docker ins
 Clone this repository:
 
 ```bash
-git clone https://github.com/temporalio/hello-world-project-template-go
+git clone https://github.com/efortuna/sagas-temporal-trip-booking
 ```
 
 [Install and run the Temporal Server](https://docs.temporal.io/docs/server/quick-install) using `docker compose`.

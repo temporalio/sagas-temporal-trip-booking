@@ -1,6 +1,7 @@
 package app
 
 import (
+	"github.com/rickb777/date"
 	"go.temporal.io/sdk/workflow"
 )
 
@@ -18,15 +19,18 @@ type CreditCardInfo struct {
 	Expiration CreditCardExpiration
 }
 
-type BookingInfo struct {
-	Name    string
-	Address string
-	CcInfo  CreditCardInfo
-}
-
 type Compensations struct {
 	compensations []any
 	arguments     [][]any
+}
+
+type BookingInfo struct {
+	Name     string
+	ClientId string
+	Address  string
+	CcInfo   CreditCardInfo
+	Start    date.Date
+	End      date.Date
 }
 
 func (s *Compensations) AddCompensation(activity any, parameters ...any) {
@@ -36,6 +40,7 @@ func (s *Compensations) AddCompensation(activity any, parameters ...any) {
 
 func (s Compensations) Compensate(ctx workflow.Context, inParallel bool) {
 	if !inParallel {
+		// Compensate in Last-In-First-Out order, to undo in the reverse order that activies were applied.
 		for i := len(s.compensations) - 1; i >= 0; i-- {
 			errCompensation := workflow.ExecuteActivity(ctx, s.compensations[i], s.arguments[i]...).Get(ctx, nil)
 			if errCompensation != nil {

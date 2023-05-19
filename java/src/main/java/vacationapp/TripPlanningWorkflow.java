@@ -2,6 +2,7 @@ package vacationapp;
 
 import io.temporal.activity.ActivityOptions;
 import io.temporal.failure.ActivityFailure;
+import io.temporal.failure.TemporalFailure;
 import io.temporal.workflow.Saga;
 import io.temporal.workflow.Workflow;
 import io.temporal.common.RetryOptions;
@@ -36,19 +37,19 @@ public class TripPlanningWorkflow implements IWorkflow {
     // The transfer method is the entry point to the Workflow.
     // Activity method executions can be orchestrated here or from within other Activity methods.
     @Override
-    public void bookVacation(BookingInfo bookingInfo, LocalDate start,
-                             LocalDate end, String idempotencyKey) {
+    public void bookVacation(BookingInfo info) {
         Saga saga = new Saga(new Saga.Options.Builder().build());
         try {
-            saga.addCompensation(activities::cancelHotel, idempotencyKey);
-            activities.bookHotel(bookingInfo, start, end, idempotencyKey);
+            saga.addCompensation(activities::cancelHotel,
+                                 info.getClientId());
+            activities.bookHotel(info);
 
-            saga.addCompensation(activities::cancelFlight, idempotencyKey);
-            activities.bookFlight(bookingInfo, start, end, idempotencyKey);
+            saga.addCompensation(activities::cancelFlight, info.getClientId());
+            activities.bookFlight(info);
 
-            saga.addCompensation(activities::cancelExcursion, idempotencyKey);
-            activities.bookExcursion(bookingInfo, start, end, idempotencyKey);
-        } catch (ActivityFailure e) {
+            saga.addCompensation(activities::cancelExcursion, info.getClientId());
+            activities.bookExcursion(info);
+        } catch (TemporalFailure e) {
             saga.compensate();
             throw e;
         }

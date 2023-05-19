@@ -3,35 +3,34 @@ package app
 import (
 	"context"
 	"fmt"
-	"time"
 )
 
-func BookHotel(ctx context.Context, bookingInfo BookingInfo, start time.Time, end time.Time, idempotencyKey string) error {
-	fmt.Println("Booking Hotel")
+func BookHotel(ctx context.Context, info BookingInfo) error {
+	fmt.Printf("Booking Hotel, transaction ID: %s\n", info.ClientId)
 	return nil
 }
 
-func BookFlight(ctx context.Context, bookingInfo BookingInfo, start time.Time, end time.Time, idempotencyKey string) error {
-	fmt.Println("Booking Flight")
+func BookFlight(ctx context.Context, info BookingInfo) error {
+	fmt.Printf("Booking Flight, transaction ID: %s\n", info.ClientId)
 	return nil
 }
 
-func BookExcursion(ctx context.Context, bookingInfo BookingInfo, start time.Time, end time.Time, idempotencyKey string) error {
-	fmt.Println("Booking Excursion")
+func BookExcursion(ctx context.Context, info BookingInfo) error {
+	fmt.Printf("Booking Excursion, transaction ID: %s\n", info.ClientId)
 	return nil
 }
 
 func CancelHotel(ctx context.Context, idempotencyKey string) error {
-	fmt.Println("Canceling Hotel")
+	fmt.Printf("Canceling Hotel with transaction ID: %s\n", idempotencyKey)
 	return nil
 }
 
 func CancelFlight(ctx context.Context, idempotencyKey string) error {
-	fmt.Println("Canceling Flight")
+	fmt.Printf("Canceling Flight with transaction ID: %s\n", idempotencyKey)
 	return nil
 }
 
 func CancelExcursion(ctx context.Context, idempotencyKey string) error {
-	fmt.Println("Canceling Excursion")
+	fmt.Printf("Canceling Excursion with transaction ID: %s\n", idempotencyKey)
 	return nil
 }
