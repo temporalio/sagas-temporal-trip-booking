@@ -50,7 +50,7 @@ public class CreditCardInfo {
             CreditCardInfo info = (CreditCardInfo) obj;
             return info.getCcv() == getCcv() &&
                     info.getNumber() == getNumber() &&
-                    info.getExpiration() == getExpiration();
+                    info.getExpiration().equals(getExpiration());
         }
         return false;
     }

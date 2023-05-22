@@ -20,15 +20,13 @@ public class InitiateTripPlanning {
         WorkflowClient client = WorkflowClient.newInstance(service);
 
         IWorkflow workflow = client.newWorkflowStub(IWorkflow.class, options);
-        BookingInfo info = new BookingInfo(
-                new CreditCardInfo(1, YearMonth.of(2023, 3), 123),
-                "Emily Fortuna", "123 Temporal Lane");
         LocalDate start = LocalDate.of(2023, 3, 1);
         LocalDate end = LocalDate.of(2023, 3, 15);
-        String idempotencyKey = java.util.UUID.randomUUID().toString();
+        BookingInfo info = new BookingInfo(
+                new CreditCardInfo(1, YearMonth.of(2023, 3), 123),
+                "Emily Fortuna", "653252", "123 Temporal Lane", start, end);
         WorkflowExecution we = WorkflowClient.start(workflow::bookVacation,
-                                                    info, start, end,
-                                                    idempotencyKey);
+                                                    info);
         System.out.printf("\nPlanning vacation is processing %s %s\n", start,
                           end);
         System.out.printf("\nWorkflowID: %s RunID: %s", we.getWorkflowId(),

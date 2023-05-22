@@ -9,16 +9,13 @@ import java.time.LocalDate;
 public interface IActivities {
 
     @ActivityMethod
-    int bookHotel(BookingInfo bookingInfo, LocalDate start, LocalDate end,
-                  String idempotencyKey);
+    int bookHotel(BookingInfo bookingInfo);
 
     @ActivityMethod
-    int bookFlight(BookingInfo bookingInfo, LocalDate start, LocalDate end,
-                   String idempotencyKey);
+    int bookFlight(BookingInfo bookingInfo);
 
     @ActivityMethod
-    int bookExcursion(BookingInfo bookingInfo, LocalDate start, LocalDate end,
-                      String idempotencyKey);
+    int bookExcursion(BookingInfo bookingInfo);
 
     @ActivityMethod
     boolean cancelHotel(String idempotencyKey);
